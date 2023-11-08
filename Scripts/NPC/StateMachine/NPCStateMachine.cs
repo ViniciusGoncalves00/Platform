@@ -1,8 +1,8 @@
-public class NPCStateMachine<T>
+public class NPCStateMachine
 {
-    public NPCStates<T> CurrentNpcStates { get; private set; }
+    public NPCStates CurrentNpcStates { get; private set; }
     
-    public void ChangeState(NPCStates<T> newState)
+    public void ChangeState(NPCStates newState)
     {
         CurrentNpcStates?.ExitState();
         CurrentNpcStates = newState;

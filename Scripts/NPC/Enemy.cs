@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Enemy : MonoBehaviour
+public abstract class Enemy : NPCBaseClass
 {
     #region State Machine
 
-    public NPCStateMachine<Enemy> StateMachine { get; private set; }
-    public EnemyIdleState IdleState { get; private set; }
-    public EnemySearchingState SearchingState { get; private set; }
-    public EnemyChasingState ChasingState { get; private set; }
-    public EnemyAttackingState AttackingState { get; private set; }
+    public NPCStateMachine StateMachine { get; private set; }
+    public IdleState IdleState { get; private set; }
+    public SearchingState SearchingState { get; private set; }
+    public ChasingState ChasingState { get; private set; }
+    public AttackingState AttackingState { get; private set; }
 
     #endregion
 
@@ -41,12 +41,12 @@ public abstract class Enemy : MonoBehaviour
     {
         #region State Machine
 
-        StateMachine = new NPCStateMachine<Enemy>();
+        StateMachine = new NPCStateMachine();
 
-        IdleState = new EnemyIdleState(this);
-        SearchingState = new EnemySearchingState(this);
-        ChasingState = new EnemyChasingState(this);
-        AttackingState = new EnemyAttackingState(this);
+        IdleState = new IdleState(this);
+        SearchingState = new SearchingState(this);
+        ChasingState = new ChasingState(this);
+        AttackingState = new AttackingState(this);
 
         #endregion
 
@@ -135,51 +135,5 @@ public abstract class Enemy : MonoBehaviour
         // Gizmos.DrawWireCube(center, size);
     }
 
-    public virtual void EnterIdleState()
-    {
-    }
-
-    public virtual void ExitIdleState()
-    {
-    }
-
-    public virtual void EnterSearchState()
-    {
-    }
-
-    public virtual void ExitSearchState()
-    {
-    }
-
-    public virtual void EnterChaseState()
-    {
-    }
-
-    public virtual void ExitChaseState()
-    {
-    }
-
-    public virtual void EnterAttackState()
-    {
-    }
-
-    public virtual void ExitAttackState()
-    {
-    }
-
-    public virtual void Idle()
-    {
-    }
-
-    public virtual void Search()
-    {
-    }
-
-    public virtual void Chase()
-    {
-    }
-
-    public virtual void Attack()
-    {
-    }
+    
 }

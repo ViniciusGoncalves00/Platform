@@ -4,8 +4,7 @@ public class EnemyDefault : Enemy
 {
     private Vector2 _target;
     private float _timer; //remove when doing attack logic
- 
-
+    
     public override void EnterAttackState()
     {
         _timer = 0;
