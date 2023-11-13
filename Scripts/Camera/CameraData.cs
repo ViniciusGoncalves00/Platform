@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CameraData : MonoBehaviour
 {
@@ -26,6 +27,12 @@ public class CameraData : MonoBehaviour
     [SerializeField] internal float shakeDuration = 1.0f;
     [SerializeField] internal float shakeIntensity = 1.0f;
     [SerializeField] internal float shakeTimer = 1.0f;
+
+    [Space(5)]
+    [Header("Camera Constraints")]
+    [SerializeField] internal Vector2 offset = new (0.1f, 0.1f);
+    [SerializeField] internal Vector2 offsetOutScene = new (0.1f, 0.1f);
+    [SerializeField] internal float delayToStartFollow = 1.0f;
 
     [Space(5)]
     [Header("Player")]

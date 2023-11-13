@@ -17,6 +17,11 @@ public class CameraShake : MonoBehaviour
     private void Update()
     {
         _timer += Time.deltaTime;
+
+        if (_timer > _cameraData.shakeTimer)
+        {
+            ShakeCamera();
+        }
     }
 
     public void ShakeCamera()
@@ -28,10 +33,9 @@ public class CameraShake : MonoBehaviour
         var x = position.x + Random.Range(-1.0f, 1.0f) * _cameraData.shakeIntensity;
         var y = position.y + Random.Range(-1.0f, 1.0f) * _cameraData.shakeIntensity;
         var z = position.z;
-
-        if (_timer < _cameraData.shakeDuration)
-        {
-            transform.position = new Vector3(x, y, z);
-        }
+        
+        var newPosition =  new Vector3(x, y, z);
+        
+        transform.position = Vector3.Lerp(transform.position, newPosition, _cameraData.camSpeedToFollowPlayer * Time.deltaTime);
     }
 }
