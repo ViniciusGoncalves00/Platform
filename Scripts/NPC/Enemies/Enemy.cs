@@ -95,8 +95,7 @@ public abstract class Enemy : NPCBaseClass
         Physics2D.OverlapCircle(position, chaseRange, _contactFilterPlayer, ChaseTrigger);
 
         _groundCheckPointA = new Vector3(position.x + 1.0f * _lookingDirection, position.y - 0.5f, 0);
-        _groundCheckPointB =
-            new Vector3(_groundCheckPointA.x + 0.2f * _lookingDirection, _groundCheckPointA.y - 0.5f, 0);
+        _groundCheckPointB = new Vector3(_groundCheckPointA.x + 0.2f * _lookingDirection, _groundCheckPointA.y - 0.5f, 0);
         Physics2D.OverlapArea(_groundCheckPointA, _groundCheckPointB, _contactFilterGround, GroundTrigger);
 
         // var pointA = new Vector3(position.x - 0.1f, position.y - 0.5f, 0);
@@ -106,34 +105,43 @@ public abstract class Enemy : NPCBaseClass
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.magenta;
-        foreach (var waypoint in waypoints)
+        var position = gameObject.transform.position;
+
+        if (GizmosManager.ShowEnemyGroundTrigger)
         {
-            Gizmos.DrawSphere(waypoint, 0.2f);
+            Gizmos.color = Color.green;
+            var size = new Vector3(_groundCheckPointB.x - _groundCheckPointA.x, _groundCheckPointB.y - _groundCheckPointA.y,
+                0);
+            var center = new Vector3(size.x / 2, size.y / 2);
+            var centerPosition = new Vector3(position.x + center.x + 1.0f * _lookingDirection, position.y + center.y - 0.5f,
+                0);
+            Gizmos.DrawWireCube(centerPosition, size);
+
+            // var center = new Vector2(position.x, position.y - 0.75f);
+            // var size = new Vector2(0.2f, 0.5f);
+            //
+            // Gizmos.DrawWireCube(center, size);
+        }
+
+        if (GizmosManager.ShowChaseTrigger)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(position, chaseRange);
+        }
+
+        if (GizmosManager.ShowAttackTrigger)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(position, attackRange);
+        }
+
+        if (GizmosManager.ShowWaypoints)
+        {
+            Gizmos.color = Color.magenta;
+            foreach (var waypoint in waypoints)
+            {
+                Gizmos.DrawSphere(waypoint, 0.2f);
+            }
         }
     }
-
-    private void OnDrawGizmosSelected()
-    {
-        var position = gameObject.transform.position;
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(position, attackRange);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(position, chaseRange);
-
-        Gizmos.color = Color.green;
-        var size = new Vector3(_groundCheckPointB.x - _groundCheckPointA.x, _groundCheckPointB.y - _groundCheckPointA.y,
-            0);
-        var center = new Vector3(size.x / 2, size.y / 2);
-        var centerPosition = new Vector3(position.x + center.x + 1.0f * _lookingDirection, position.y + center.y - 0.5f,
-            0);
-        Gizmos.DrawWireCube(centerPosition, size);
-
-        // var center = new Vector2(position.x, position.y - 0.75f);
-        // var size = new Vector2(0.2f, 0.5f);
-        //
-        // Gizmos.DrawWireCube(center, size);
-    }
-
-    
 }

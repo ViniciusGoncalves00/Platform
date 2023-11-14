@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private CameraData cameraData;
-    [SerializeField] private Camera cam;
+    [SerializeField] internal CameraData cameraData;
+    [SerializeField] internal Camera cam;
 
     internal Vector3 PlayerPosition;
     internal Vector2 PreviousPlayerPosition;
@@ -80,7 +80,7 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
-    private void DontFollowLimit()
+    public void DontFollowLimit()
     {
         RectFollowLimit[0] = cam.ViewportToWorldPoint(new Vector3(0 + _offset.x, 0 + _offset.y, _clipPlane));
         RectFollowLimit[1] = cam.ViewportToWorldPoint(new Vector3(0 + _offset.x, 1 - _offset.y, _clipPlane));
@@ -88,7 +88,7 @@ public class CameraFollow : MonoBehaviour
         RectFollowLimit[3] = cam.ViewportToWorldPoint(new Vector3(1 - _offset.x, 0 + _offset.y, _clipPlane));
     }
 
-    private void OutSceneLimit()
+    public void OutSceneLimit()
     {
         RectOutSceneLimit[0] = cam.ViewportToWorldPoint(new Vector3(0 + _offsetOutScene.x, 0 + _offsetOutScene.y, _clipPlane));
         RectOutSceneLimit[1] = cam.ViewportToWorldPoint(new Vector3(0 + _offsetOutScene.x, 1 - _offsetOutScene.y, _clipPlane));

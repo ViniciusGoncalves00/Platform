@@ -8,7 +8,7 @@ public class DataPersistenceManager : MonoBehaviour
 {
     private string _fileName = "arachnid.arachnid";
 
-    private MyPlayerData _playerData;
+    private PlayerData _playerData;
     
     private List<IDataPersistence> _dataPersistence;
     
@@ -57,7 +57,7 @@ public class DataPersistenceManager : MonoBehaviour
     
     public void NewGame()
     {
-        _playerData = FindObjectOfType<Player>().GetComponent<MyPlayerData>();;
+        _playerData = FindObjectOfType<Player>().GetComponent<PlayerData>();;
     }
     
     public void LoadGame()

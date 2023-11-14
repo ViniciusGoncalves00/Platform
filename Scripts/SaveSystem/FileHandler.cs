@@ -10,15 +10,15 @@ public class FileHandler
         _path = path;
     }
 
-    public MyPlayerData Load()
+    public PlayerData Load()
     {
         EnsureFileExist();
         File.ReadAllText(_path);
         var contents = File.ReadAllText(_path);
-        return JsonUtility.FromJson<MyPlayerData>(contents);
+        return JsonUtility.FromJson<PlayerData>(contents);
     }
 
-    public void Save(MyPlayerData data)
+    public void Save(PlayerData data)
     {
         var json = JsonUtility.ToJson(data, true);
         File.WriteAllText(_path, json);

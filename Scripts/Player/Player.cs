@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     
     #endregion
     
-    [SerializeField] internal MyPlayerData Data;
+    [SerializeField] internal PlayerData Data;
     [SerializeField] internal UISkills uiSkills;
 
     internal Transform PlayerTransform;
@@ -147,17 +147,20 @@ public class Player : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        
-        var firstPoint = _groundCheckPointA.position;
-        var thirdPoint = _groundCheckPointB.position;
 
-        var secondPoint = new Vector2(thirdPoint.x, firstPoint.y);
-        var fourthPoint = new Vector2(firstPoint.x, thirdPoint.y);
+        if (GizmosManager.ShowPlayerGroundTrigger)
+        {
+            var firstPoint = _groundCheckPointA.position;
+            var thirdPoint = _groundCheckPointB.position;
+
+            var secondPoint = new Vector2(thirdPoint.x, firstPoint.y);
+            var fourthPoint = new Vector2(firstPoint.x, thirdPoint.y);
         
-        Gizmos.DrawLine(firstPoint, secondPoint);
-        Gizmos.DrawLine(secondPoint, thirdPoint);
-        Gizmos.DrawLine(thirdPoint, fourthPoint);
-        Gizmos.DrawLine(fourthPoint, firstPoint);
+            Gizmos.DrawLine(firstPoint, secondPoint);
+            Gizmos.DrawLine(secondPoint, thirdPoint);
+            Gizmos.DrawLine(thirdPoint, fourthPoint);
+            Gizmos.DrawLine(fourthPoint, firstPoint);
+        }
     }
 
     private void TakeDamage(int damage)

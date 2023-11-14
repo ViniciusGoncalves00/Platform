@@ -1,11 +1,12 @@
-using System;
+#if UNITY_EDITOR
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class CameraGizmos : MonoBehaviour
 {
     [SerializeField] private CameraFollow camFollow;
     [SerializeField] private Camera cam;
+
+    private readonly Vector2[] _viewportCorner = { new(0.0f, 0.0f), new(0.0f, 1.0f), new(1.0f, 1.0f), new(1.0f, 0.0f) };
 
     private void Start()
     {
@@ -21,30 +22,32 @@ public class CameraGizmos : MonoBehaviour
         Gizmos.DrawWireSphere(camFollow.PlayerPosition, 0.2f);
         Gizmos.DrawLine(camFollow.PreviousPlayerPosition, camFollow.PlayerPosition);
 
-        #region Window Constraint
+        camFollow.OutSceneLimit();
+        camFollow.DontFollowLimit();
 
-        Gizmos.DrawLine(camFollow.RectFollowLimit[0], camFollow.RectFollowLimit[1]);
-        Gizmos.DrawLine(camFollow.RectFollowLimit[1], camFollow.RectFollowLimit[2]);
-        Gizmos.DrawLine(camFollow.RectFollowLimit[2], camFollow.RectFollowLimit[3]);
-        Gizmos.DrawLine(camFollow.RectFollowLimit[3], camFollow.RectFollowLimit[0]);
+        if (GizmosManager.ShowFollowLimit)
+        {
+            Gizmos.color = Color.yellow;
 
-        Gizmos.DrawLine(camFollow.RectFollowLimit[0], camFollow.RectOutSceneLimit[0]);
-        Gizmos.DrawLine(camFollow.RectFollowLimit[1], camFollow.RectOutSceneLimit[1]);
-        Gizmos.DrawLine(camFollow.RectFollowLimit[2], camFollow.RectOutSceneLimit[2]);
-        Gizmos.DrawLine(camFollow.RectFollowLimit[3], camFollow.RectOutSceneLimit[3]);
+            Gizmos.DrawLineStrip(camFollow.RectFollowLimit, true);
 
-        #endregion
+            for (int i = 0; i < camFollow.RectFollowLimit.Length; i++)
+            {
+                Gizmos.DrawLine(camFollow.RectFollowLimit[i], camFollow.RectOutSceneLimit[i]);
+            }
+        }
 
-        Gizmos.color = Color.red;
+        if (GizmosManager.ShowOutSceneLimit)
+        {
+            Gizmos.color = Color.red;
 
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[0], camFollow.RectOutSceneLimit[1]);
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[1], camFollow.RectOutSceneLimit[2]);
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[2], camFollow.RectOutSceneLimit[3]);
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[3], camFollow.RectOutSceneLimit[0]);
+            Gizmos.DrawLineStrip(camFollow.RectOutSceneLimit, true);
 
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[0], cam.ViewportToWorldPoint(new Vector3(0, 0, 0)));
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[1], cam.ViewportToWorldPoint(new Vector3(0, 1, 0)));
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[2], cam.ViewportToWorldPoint(new Vector3(1, 1, 0)));
-        Gizmos.DrawLine(camFollow.RectOutSceneLimit[3], cam.ViewportToWorldPoint(new Vector3(1, 0, 0)));
+            for (int i = 0; i < camFollow.RectOutSceneLimit.Length; i++)
+            {
+                Gizmos.DrawLine(camFollow.RectOutSceneLimit[i], cam.ViewportToWorldPoint(_viewportCorner[i]));
+            }
+        }
     }
 }
+#endif
