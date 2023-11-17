@@ -24,25 +24,26 @@ public class Player : MonoBehaviour
 
     internal Transform PlayerTransform;
     internal Rigidbody2D Rigidbody2D;
+    internal UIManager UIManager;
     
     internal float MoveInput;
     internal float MoveVariableInput;
     internal int LookDirection;
 
-    [Header ("PARTICLES")]
+    [Header ("Particles")]
     [SerializeField] internal ParticleSystem runParticle;
     [SerializeField] internal ParticleSystem groundParticle;
     [SerializeField] internal ParticleSystem jumpParticle;
     
     #region Physics
-    [Header ("PHYSICS")]
+    [Header ("Physics")]
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private Transform _groundCheckPointA;
     [SerializeField] private Transform _groundCheckPointB;
     private List<Collider2D> _groundList = new();
     private ContactFilter2D _groundContactFilter;
     #endregion
-
+    
     #region Timers
     internal float LastTimeOnGround;
     internal float LastTimeOnWall;
@@ -57,7 +58,7 @@ public class Player : MonoBehaviour
     #endregion
     
     #region Bools
-    public bool IsOnGround;
+    internal bool IsOnGround;
     #endregion
 
     public Vector3 currentRotation;
@@ -80,6 +81,7 @@ public class Player : MonoBehaviour
         
         PlayerTransform = gameObject.transform;
         Rigidbody2D = PlayerTransform.GetComponent<Rigidbody2D>();
+        UIManager = FindObjectOfType<UIManager>();
     }
 
     private void Start()
@@ -163,12 +165,14 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if (TakeDamageCooldown > 1.0f)
         {
             TakeDamageCooldown = 0;
             Data.health -= damage;
+            
+            UIManager.UpdateInterface();
         }
     }
 }

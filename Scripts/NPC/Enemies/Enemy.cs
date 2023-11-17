@@ -1,64 +1,39 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Enemy : NPCBaseClass
 {
-    #region State Machine
-
-    public NPCStateMachine StateMachine { get; private set; }
-    public IdleState IdleState { get; private set; }
-    public SearchingState SearchingState { get; private set; }
-    public ChasingState ChasingState { get; private set; }
-    public AttackingState AttackingState { get; private set; }
-
-    #endregion
-
-    [SerializeField] internal int velocity = 1;
-    private float _lastPosition;
-    private int _lookingDirection = 1;
-
-    private protected Rigidbody2D Rigidbody2D;
-    private protected SpriteRenderer SpriteRenderer;
-
     [SerializeField] private protected Vector2[] waypoints;
     private protected int RandomIndex;
-    private Vector2 _groundCheckPointA, _groundCheckPointB;
+    
+    private protected List<Collider2D> ChaseTrigger = new();
+    private protected List<Collider2D> AttackTrigger = new();
+    private protected List<Collider2D> TouchTrigger = new();
+    private protected List<Collider2D> GroundTrigger = new();
+    [SerializeField] private protected float chaseRange = 4;
+    [SerializeField] private protected float attackRange = 2;
+    [SerializeField] private protected float touchRange = 1;
 
-    [SerializeField] private LayerMask playerLayer;
-    [SerializeField] private LayerMask groundLayer;
-    internal readonly List<Collider2D> ChaseTrigger = new();
-    internal readonly List<Collider2D> AttackTrigger = new();
-    internal readonly List<Collider2D> GroundTrigger = new();
-    [SerializeField] private float chaseRange = 4;
-    [SerializeField] private float attackRange = 2;
+    private protected ContactFilter2D _contactFilterPlayer;
+    private protected ContactFilter2D _contactFilterGround;
+    
+    private protected Vector2 Target;
 
-    private ContactFilter2D _contactFilterPlayer;
-    private ContactFilter2D _contactFilterGround;
+    private protected Player Player;
 
-    internal Player Player;
-
-    private void Awake()
+    private protected override void Awake()
     {
-        #region State Machine
-
-        StateMachine = new NPCStateMachine();
-
-        IdleState = new IdleState(this);
-        SearchingState = new SearchingState(this);
-        ChasingState = new ChasingState(this);
-        AttackingState = new AttackingState(this);
-
-        #endregion
-
-        Rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-        SpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        base.Awake();
 
         Player = FindObjectOfType<Player>();
     }
 
-    private void Start()
+    private protected override void Start()
     {
-        StateMachine.ChangeState(SearchingState);
+        base.Start();
+        
+        StateMachine.ChangeState(IdleState);
 
         _contactFilterPlayer = new ContactFilter2D()
         {
@@ -73,75 +48,48 @@ public abstract class Enemy : NPCBaseClass
         };
     }
 
-    private void FixedUpdate()
+    private protected override void Update()
     {
-        StateMachine.CurrentNpcStates.PhysicsUpdate();
-
-        var position = gameObject.transform.position;
-        if (position.x > _lastPosition)
-        {
-            _lookingDirection = 1;
-            SpriteRenderer.flipX = false;
-        }
-        else if (position.x < _lastPosition)
-        {
-            _lookingDirection = -1;
-            SpriteRenderer.flipX = true;
-        }
-
-        _lastPosition = position.x;
-
-        Physics2D.OverlapCircle(position, attackRange, _contactFilterPlayer, AttackTrigger);
-        Physics2D.OverlapCircle(position, chaseRange, _contactFilterPlayer, ChaseTrigger);
-
-        _groundCheckPointA = new Vector3(position.x + 1.0f * _lookingDirection, position.y - 0.5f, 0);
-        _groundCheckPointB = new Vector3(_groundCheckPointA.x + 0.2f * _lookingDirection, _groundCheckPointA.y - 0.5f, 0);
-        Physics2D.OverlapArea(_groundCheckPointA, _groundCheckPointB, _contactFilterGround, GroundTrigger);
-
-        // var pointA = new Vector3(position.x - 0.1f, position.y - 0.5f, 0);
-        // var pointB = new Vector3(position.x + 0.1f, position.y - 1.0f, 0);
-        // Physics2D.OverlapArea(pointA, pointB, _contactFilterGround, _groundTrigger);
+        base.Update();
     }
 
-    private void OnDrawGizmos()
+    private protected override void FixedUpdate()
     {
-        var position = gameObject.transform.position;
+        base.FixedUpdate();
+    }
 
-        if (GizmosManager.ShowEnemyGroundTrigger)
+    private protected virtual void OnDrawGizmos()
+    {
+    }
+    
+    public override void Idle()
+    {
+        if (ChaseTrigger.Count == 0)
         {
-            Gizmos.color = Color.green;
-            var size = new Vector3(_groundCheckPointB.x - _groundCheckPointA.x, _groundCheckPointB.y - _groundCheckPointA.y,
-                0);
-            var center = new Vector3(size.x / 2, size.y / 2);
-            var centerPosition = new Vector3(position.x + center.x + 1.0f * _lookingDirection, position.y + center.y - 0.5f,
-                0);
-            Gizmos.DrawWireCube(centerPosition, size);
-
-            // var center = new Vector2(position.x, position.y - 0.75f);
-            // var size = new Vector2(0.2f, 0.5f);
-            //
-            // Gizmos.DrawWireCube(center, size);
+            StateMachine.ChangeState(SearchingState);
         }
 
-        if (GizmosManager.ShowChaseTrigger)
+        else if (AttackTrigger.Count != 0)
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(position, chaseRange);
+            StateMachine.ChangeState(AttackingState);
         }
+    }
 
-        if (GizmosManager.ShowAttackTrigger)
+    public override void Search()
+    {
+        if (ChaseTrigger.Count != 0)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(position, attackRange);
+            StateMachine.ChangeState(ChasingState);
         }
+    }
 
-        if (GizmosManager.ShowWaypoints)
-        {
-            Gizmos.color = Color.magenta;
-            foreach (var waypoint in waypoints)
-            {
-                Gizmos.DrawSphere(waypoint, 0.2f);
-            }
-        }
+    public override void Chase()
+    {
+        base.Chase();
+    }
+
+    public override void Attack()
+    {
+        base.Attack();
     }
 }

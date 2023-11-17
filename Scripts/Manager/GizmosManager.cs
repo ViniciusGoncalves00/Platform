@@ -8,6 +8,7 @@ public class GizmosManager : MonoBehaviour
     public static bool ShowEnemyGroundTrigger { get; private set; }
     public static bool ShowChaseTrigger { get; private set; }
     public static bool ShowAttackTrigger { get; private set; }
+    public static bool ShowTouchTrigger { get; private set; }
     public static bool ShowWaypoints { get; private set; }
     
     
@@ -33,6 +34,7 @@ public class GizmosManager : MonoBehaviour
         ShowEnemyGroundTrigger = showEnemyGroundTrigger;
         ShowChaseTrigger = showChaseTrigger;
         ShowAttackTrigger = showAttackTrigger;
+        ShowTouchTrigger = showTouchTrigger;
         ShowWaypoints = showWaypoints;
     }
 }
