@@ -23,6 +23,7 @@ public class GizmosManager : MonoBehaviour
     public bool showEnemyGroundTrigger;
     public bool showChaseTrigger;
     public bool showAttackTrigger;
+    public bool showTouchTrigger;
     public bool showWaypoints;
     
 
